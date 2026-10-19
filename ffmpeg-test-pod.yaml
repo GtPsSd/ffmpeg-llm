@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ffmpeg-test-pod
+spec:
+  containers:
+  - name: ffmpeg-container
+    image: jrottenberg/ffmpeg:4.4-alpine
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - mountPath: /data
+      name: ffmpeg-storage
+  volumes:
+  - name: ffmpeg-storage
+    persistentVolumeClaim:
+      claimName: ffmpeg-pvc
