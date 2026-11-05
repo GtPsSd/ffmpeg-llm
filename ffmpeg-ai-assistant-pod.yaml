@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ai-assistant-worker
+spec:
+  restartPolicy: Never
+  # 1. Bind the permissions to create Jobs and read logs
+  serviceAccountName: ffmpeg-assistant-sa
+  containers:
+  - name: ai-assistant
+    image: ffmpeg-ai-assistant:v1
+    # 2. Force kind to use your locally loaded image instead of pulling from the internet
+    imagePullPolicy: Never
+    env:
+    # 3. Inject the Gemini API key securely from the Secret
+    - name: GEMINI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: gemini-api-secret
+          key: GEMINI_API_KEY

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ffmpeg-assistant-sa
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ffmpeg-job-manager-role
+  namespace: default
+rules:
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  # "patch" is required because your script uses "kubectl apply"
+  verbs: ["create", "get", "list", "watch", "patch", "update", "delete"]
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ffmpeg-job-manager-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: ffmpeg-assistant-sa
+roleRef:
+  kind: Role
+  name: ffmpeg-job-manager-role
+  apiGroup: rbac.authorization.k8s.io
